@@ -1,0 +1,252 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: glorrian
+      changes:
+        - createTable:
+            tableName: authors
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: full_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pseudonym
+                  type: VARCHAR(255)
+              - column:
+                  name: birth_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 2
+      author: glorrian
+      changes:
+        - createTable:
+            tableName: genres
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: 3
+      author: glorrian
+      changes:
+        - createTable:
+            tableName: works
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: genre_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_works_genres
+                    references: genres(id)
+
+  - changeSet:
+      id: 4
+      author: glorrian
+      changes:
+        - createTable:
+            tableName: work_authors
+            columns:
+              - column:
+                  name: work_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: work_authors
+            baseColumnNames: work_id
+            referencedTableName: works
+            referencedColumnNames: id
+            constraintName: fk_work_authors_works
+        - addForeignKeyConstraint:
+            baseTableName: work_authors
+            baseColumnNames: author_id
+            referencedTableName: authors
+            referencedColumnNames: id
+            constraintName: fk_work_authors_authors
+        - addPrimaryKey:
+            tableName: work_authors
+            columnNames: work_id, author_id
+            constraintName: pk_work_authors
+
+  - changeSet:
+      id: 5
+      author: glorrian
+      changes:
+        - createTable:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: work_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_books_works
+                    references: works(id)
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isbn
+                  type: VARCHAR(13)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: publication_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 6
+      author: glorrian
+      changes:
+        - createTable:
+            tableName: readers
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: full_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: 7
+      author: glorrian
+      changes:
+        - createTable:
+            tableName: library_books
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: book_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_library_books_books
+                    references: books(id)
+
+  - changeSet:
+      id: 8
+      author: glorrian
+      changes:
+        - createTable:
+            tableName: borrowing_records
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: library_book_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_borrowing_records_library_books
+                    references: library_books(id)
+              - column:
+                  name: reader_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_borrowing_records_readers
+                    references: readers(id)
+              - column:
+                  name: borrow_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: return_date
+                  type: DATE
+
+  - changeSet:
+      id: 9
+      author: glorrian
+      changes:
+        - createTable:
+            tableName: library_books_status
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: library_book_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_library_books_status_library_books
+                    references: library_books(id)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
