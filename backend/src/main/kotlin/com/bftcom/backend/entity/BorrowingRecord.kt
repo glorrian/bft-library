@@ -4,6 +4,6 @@ import java.time.LocalDate
 
 data class BorrowingRecord(
 	override var id: Long = 0,
-	val libraryBookId: Int,
+	val libraryBookId: Long,
 	val borrowDate: LocalDate
 ) : Entity
