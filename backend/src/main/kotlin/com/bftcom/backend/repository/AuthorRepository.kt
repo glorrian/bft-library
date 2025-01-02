@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 
 @Repository
-class AuthorRepositoryDefault(
+class AuthorRepository(
 	jdbcTemplate: JdbcTemplate
 ) : DefaultJdbcCrudRepository<Author>(
 	jdbcTemplate,

@@ -11,7 +11,7 @@ import java.time.LocalDate
 class AuthorRepositoryTest {
 
 	@Autowired
-	private lateinit var authorRepository: AuthorRepositoryDefault
+	private lateinit var authorRepository: AuthorRepository
 
 	@Test
 	fun givenAuthor_whenSave_thenCanBeFoundById() {

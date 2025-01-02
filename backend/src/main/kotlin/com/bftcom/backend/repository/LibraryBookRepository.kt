@@ -1,24 +1,23 @@
 package com.bftcom.backend.repository
 
-import com.bftcom.backend.entity.Work
+import com.bftcom.backend.entity.LibraryBook
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 
 @Repository
-class WorkRepository(
+class LibraryBookRepository(
     jdbcTemplate: JdbcTemplate
-) : DefaultJdbcCrudRepository<Work>(
+) : DefaultJdbcCrudRepository<LibraryBook>(
     jdbcTemplate,
-    "works",
-    Work::class.java
+    "library_books",
+    LibraryBook::class.java
 ) {
-    override val rowMapper: RowMapper<Work> = RowMapper { rs: ResultSet, _: Int ->
-        Work(
+    override val rowMapper: RowMapper<LibraryBook> = RowMapper { rs: ResultSet, _: Int ->
+        LibraryBook(
             id = rs.getLong("id"),
-            title = rs.getString("title"),
-            genreId = rs.getLong("genre_id")
+            bookId = rs.getInt("book_id")
         )
     }
 }

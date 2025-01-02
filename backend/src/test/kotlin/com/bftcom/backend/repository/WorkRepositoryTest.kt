@@ -20,7 +20,7 @@ class WorkRepositoryTest {
     fun givenWork_whenSaveAndFindById_thenWorkIsFound() {
         val genre = Genre(name = "Fiction")
         val genreId = genreRepository.save(genre)
-        val work = Work(title = "Test Work", genreId = genreId.toInt())
+        val work = Work(title = "Test Work", genreId = genreId)
         val id = workRepository.save(work)
         val savedWork = workRepository.findById(id)
         assertNotNull(savedWork)
@@ -32,7 +32,7 @@ class WorkRepositoryTest {
     fun givenWork_whenDelete_thenWorkIsDeleted() {
         val genre = Genre(name = "Non-Fiction")
         val genreId = genreRepository.save(genre)
-        val work = Work(title = "Delete Work", genreId = genreId.toInt())
+        val work = Work(title = "Delete Work", genreId = genreId)
         val id = workRepository.save(work)
         workRepository.deleteById(id)
         assertNull(workRepository.findById(id))
@@ -42,7 +42,7 @@ class WorkRepositoryTest {
     fun givenWork_whenUpdateWork_thenWorkIsUpdated() {
         val genre = Genre(name = "Science")
         val genreId = genreRepository.save(genre)
-        val work = Work(title = "Original Title", genreId = genreId.toInt())
+        val work = Work(title = "Original Title", genreId = genreId)
         val id = workRepository.save(work)
         val updatedWork = work.copy(id = id, title = "Updated Title")
         workRepository.save(updatedWork)
@@ -55,8 +55,8 @@ class WorkRepositoryTest {
     fun givenWorks_whenFindAll_thenAllWorksAreFound() {
         val genre = Genre(name = "History")
         val genreId = genreRepository.save(genre)
-        val work1 = Work(title = "Work One", genreId = genreId.toInt())
-        val work2 = Work(title = "Work Two", genreId = genreId.toInt())
+        val work1 = Work(title = "Work One", genreId = genreId)
+        val work2 = Work(title = "Work Two", genreId = genreId)
         workRepository.save(work1)
         workRepository.save(work2)
         val works = workRepository.findAll()
@@ -68,7 +68,7 @@ class WorkRepositoryTest {
     fun givenWork_whenExistsById_thenWorkExists() {
         val genre = Genre(name = "Adventure")
         val genreId = genreRepository.save(genre)
-        val work = Work(title = "Existence Check", genreId = genreId.toInt())
+        val work = Work(title = "Existence Check", genreId = genreId)
         val id = workRepository.save(work)
         assertTrue(workRepository.existsById(id))
         workRepository.deleteById(id)

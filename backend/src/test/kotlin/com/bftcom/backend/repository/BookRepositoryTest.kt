@@ -11,7 +11,7 @@ import java.time.LocalDate
 class BookRepositoryTest {
 
     @Autowired
-    private lateinit var bookRepository: BookRepositoryDefault
+    private lateinit var bookRepository: BookRepository
 
     @Test
     fun givenBook_whenSaveAndFindById_thenBookIsFound() {
