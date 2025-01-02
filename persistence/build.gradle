@@ -1,0 +1,47 @@
+plugins {
+	alias libs.plugins.kotlin
+	alias libs.plugins.kotlin.spring
+	alias libs.plugins.spring.boot
+	alias libs.plugins.dependency.management
+}
+
+group = 'com.bftcom'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation libs.spring.boot.starter.artemis
+	implementation libs.spring.boot.starter.jdbc
+	implementation libs.spring.boot.starter.mail
+	implementation libs.spring.boot.starter.web
+	implementation libs.jackson.module.kotlin
+	implementation libs.kotlin.reflect
+	implementation libs.liquibase.core
+	runtimeOnly libs.h2.database
+	runtimeOnly libs.postgresql
+	runtimeOnly libs.dotenv.kotlin
+	testImplementation libs.spring.boot.starter.test
+	testImplementation libs.kotlin.test.junit5
+	testImplementation libs.kotest.runner.junit5
+	testImplementation libs.kotest.assertions.core
+	testRuntimeOnly libs.junit.platform.launcher
+}
+
+kotlin {
+	compilerOptions {
+		freeCompilerArgs.addAll '-Xjsr305=strict'
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

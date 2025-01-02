@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/001_create_tables_20250102.sql
+  - include:
+      file: db/changelog/002_add_isbn_format_check_20250102.sql
+  - include:
+      file: db/changelog/003_add_unique_constraints_20250102.sql
+  - include:
+      file: db/changelog/004_set_default_borrow_date_20250102.sql
+  - include:
+      file: db/changelog/005_add_borrowing_logs_20250102.sql
