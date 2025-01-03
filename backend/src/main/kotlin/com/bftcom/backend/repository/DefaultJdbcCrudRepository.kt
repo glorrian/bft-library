@@ -7,7 +7,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.jdbc.support.KeyHolder
 import java.sql.PreparedStatement
 import kotlin.reflect.full.memberProperties
-
 @Suppress("SqlSourceToSinkFlow")
 abstract class DefaultJdbcCrudRepository<T : Entity>(
 	private val jdbcTemplate: JdbcTemplate,
@@ -18,11 +17,11 @@ abstract class DefaultJdbcCrudRepository<T : Entity>(
 	protected abstract val rowMapper: RowMapper<T>
 
 	override fun save(entity: T): Long {
-		return if (existsById(entity.id)) {
+		return if (entity.id == 0L) {
+			insert(entity)
+		} else {
 			update(entity)
 			entity.id
-		} else {
-			insert(entity)
 		}
 	}
 
@@ -76,14 +75,14 @@ abstract class DefaultJdbcCrudRepository<T : Entity>(
 			?: throw RuntimeException("Failed to retrieve id of the inserted entity")
 	}
 
-	private fun update(entity: T): Int {
+	private fun update(entity: T) {
 		val columns = getColumns(entity).keys.joinToString(", ") { "$it = ?" }
 		val sql = "UPDATE $tableName SET $columns WHERE id = ?"
 
 		val values = getColumns(entity).values.toMutableList()
 		values.add(entity.id)
 
-		return jdbcTemplate.update(sql, *values.toTypedArray())
+		jdbcTemplate.update(sql, *values.toTypedArray())
 	}
 
 	private fun String.toSnakeCase(): String {

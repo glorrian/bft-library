@@ -25,7 +25,7 @@ class BorrowingRecordRepositoryTest {
     fun givenBorrowingRecord_whenSaveAndFindById_thenBorrowingRecordIsFound() {
         val book = Book(title = "Test Book", isbn = "1", publicationDate = LocalDate.now())
         val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId.toInt())
+        val libraryBook = LibraryBook(bookId = bookId)
         val libraryBookId = libraryBookRepository.save(libraryBook)
         val borrowingRecord = BorrowingRecord(libraryBookId = libraryBookId, borrowDate = LocalDate.now())
         val id = borrowingRecordRepository.save(borrowingRecord)
@@ -39,7 +39,7 @@ class BorrowingRecordRepositoryTest {
     fun givenBorrowingRecord_whenDelete_thenBorrowingRecordIsDeleted() {
         val book = Book(title = "Test Book", isbn = "2", publicationDate = LocalDate.now())
         val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId.toInt())
+        val libraryBook = LibraryBook(bookId = bookId)
         val libraryBookId = libraryBookRepository.save(libraryBook)
         val borrowingRecord = BorrowingRecord(libraryBookId = libraryBookId, borrowDate = LocalDate.now())
         val id = borrowingRecordRepository.save(borrowingRecord)
@@ -51,7 +51,7 @@ class BorrowingRecordRepositoryTest {
     fun givenBorrowingRecord_whenUpdateBorrowingRecord_thenBorrowingRecordIsUpdated() {
         val book = Book(title = "Test Book", isbn = "3", publicationDate = LocalDate.now())
         val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId.toInt())
+        val libraryBook = LibraryBook(bookId = bookId)
         val libraryBookId = libraryBookRepository.save(libraryBook)
         val borrowingRecord = BorrowingRecord(libraryBookId = libraryBookId, borrowDate = LocalDate.now())
         val id = borrowingRecordRepository.save(borrowingRecord)
@@ -68,8 +68,8 @@ class BorrowingRecordRepositoryTest {
         val book2 = Book(title = "Test Book 2", isbn = "5", publicationDate = LocalDate.now())
         val bookId1 = bookRepository.save(book1)
         val bookId2 = bookRepository.save(book2)
-        val libraryBook1 = LibraryBook(bookId = bookId1.toInt())
-        val libraryBook2 = LibraryBook(bookId = bookId2.toInt())
+        val libraryBook1 = LibraryBook(bookId = bookId1)
+        val libraryBook2 = LibraryBook(bookId = bookId2)
         val libraryBookId1 = libraryBookRepository.save(libraryBook1)
         val libraryBookId2 = libraryBookRepository.save(libraryBook2)
         val borrowingRecord1 = BorrowingRecord(libraryBookId = libraryBookId1, borrowDate = LocalDate.now())
@@ -85,7 +85,7 @@ class BorrowingRecordRepositoryTest {
     fun givenBorrowingRecord_whenExistsById_thenBorrowingRecordExists() {
         val book = Book(title = "Test Book", isbn = "6", publicationDate = LocalDate.now())
         val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId.toInt())
+        val libraryBook = LibraryBook(bookId = bookId)
         val libraryBookId = libraryBookRepository.save(libraryBook)
         val borrowingRecord = BorrowingRecord(libraryBookId = libraryBookId, borrowDate = LocalDate.now())
         val id = borrowingRecordRepository.save(borrowingRecord)

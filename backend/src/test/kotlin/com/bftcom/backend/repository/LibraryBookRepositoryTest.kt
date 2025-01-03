@@ -21,7 +21,7 @@ class LibraryBookRepositoryTest {
     fun givenLibraryBook_whenSaveAndFindById_thenLibraryBookIsFound() {
         val book = Book(title = "Test Book", isbn = "1", publicationDate = LocalDate.now())
         val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId.toInt())
+        val libraryBook = LibraryBook(bookId = bookId)
         val id = libraryBookRepository.save(libraryBook)
         val savedLibraryBook = libraryBookRepository.findById(id)
         assertNotNull(savedLibraryBook)
@@ -32,7 +32,7 @@ class LibraryBookRepositoryTest {
     fun givenLibraryBook_whenDelete_thenLibraryBookIsDeleted() {
 		val book = Book(title = "Test Book", isbn = "2", publicationDate = LocalDate.now())
         val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId.toInt())
+        val libraryBook = LibraryBook(bookId = bookId)
         val id = libraryBookRepository.save(libraryBook)
         libraryBookRepository.deleteById(id)
         assertNull(libraryBookRepository.findById(id))
@@ -42,11 +42,11 @@ class LibraryBookRepositoryTest {
     fun givenLibraryBook_whenUpdateLibraryBook_thenLibraryBookIsUpdated() {
 		val book = Book(title = "Test Book", isbn = "3", publicationDate = LocalDate.now())
         val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId.toInt())
+        val libraryBook = LibraryBook(bookId = bookId)
         val id = libraryBookRepository.save(libraryBook)
 		val updatedBook = book.copy(id = bookId, title = "Updated Test Book")
         val updatedBookId = bookRepository.save(updatedBook)
-        val updatedLibraryBook = libraryBook.copy(id = id, bookId = updatedBookId.toInt())
+        val updatedLibraryBook = libraryBook.copy(id = id, bookId = updatedBookId)
         libraryBookRepository.save(updatedLibraryBook)
         val foundLibraryBook = libraryBookRepository.findById(id)
         assertNotNull(foundLibraryBook)
@@ -59,20 +59,20 @@ class LibraryBookRepositoryTest {
 		val book2 = Book(title = "Test Book 2", isbn = "5", publicationDate = LocalDate.now())
         val bookId1 = bookRepository.save(book1)
         val bookId2 = bookRepository.save(book2)
-        val libraryBook1 = LibraryBook(bookId = bookId1.toInt())
-        val libraryBook2 = LibraryBook(bookId = bookId2.toInt())
+        val libraryBook1 = LibraryBook(bookId = bookId1)
+        val libraryBook2 = LibraryBook(bookId = bookId2)
         libraryBookRepository.save(libraryBook1)
         libraryBookRepository.save(libraryBook2)
         val libraryBooks = libraryBookRepository.findAll()
-        assertTrue(libraryBooks.any { it.bookId == bookId1.toInt() })
-        assertTrue(libraryBooks.any { it.bookId == bookId2.toInt() })
+        assertTrue(libraryBooks.any { it.bookId == bookId1 })
+        assertTrue(libraryBooks.any { it.bookId == bookId2 })
     }
 
     @Test
     fun givenLibraryBook_whenExistsById_thenLibraryBookExists() {
 		val book = Book(title = "Test Book", isbn = "6", publicationDate = LocalDate.now())
         val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId.toInt())
+        val libraryBook = LibraryBook(bookId = bookId)
         val id = libraryBookRepository.save(libraryBook)
         assertTrue(libraryBookRepository.existsById(id))
         libraryBookRepository.deleteById(id)

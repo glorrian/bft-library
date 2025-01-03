@@ -17,7 +17,7 @@ class LibraryBookRepository(
     override val rowMapper: RowMapper<LibraryBook> = RowMapper { rs: ResultSet, _: Int ->
         LibraryBook(
             id = rs.getLong("id"),
-            bookId = rs.getInt("book_id")
+            bookId = rs.getLong("book_id")
         )
     }
 }
