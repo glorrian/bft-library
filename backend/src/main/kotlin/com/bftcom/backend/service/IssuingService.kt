@@ -13,7 +13,7 @@ class IssuingService(
 ) {
 
 	fun issueBook(libraryBookId: Long, borrowDate: LocalDate): BorrowingRecord {
-		val libraryBook = libraryBookRepository.findById(libraryBookId)
+		libraryBookRepository.findById(libraryBookId)
 			?: throw IllegalStateException("LibraryBook not found")
 
 		val current = borrowingRecordRepository.findAll()
