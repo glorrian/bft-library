@@ -65,5 +65,6 @@ CREATE TABLE borrowing_records
     id              SERIAL PRIMARY KEY NOT NULL,
     library_book_id INT                NOT NULL,
     borrow_date     DATE               NOT NULL,
+    return_date     DATE, -- NULL means the book is not returned yet
     FOREIGN KEY (library_book_id) REFERENCES library_books (id)
 );

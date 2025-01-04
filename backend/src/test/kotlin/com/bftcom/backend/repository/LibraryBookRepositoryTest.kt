@@ -3,7 +3,9 @@ package com.bftcom.backend.repository
 import com.bftcom.backend.entity.Book
 import com.bftcom.backend.entity.LibraryBook
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
@@ -11,91 +13,98 @@ import java.time.LocalDate
 @SpringBootTest
 class LibraryBookRepositoryTest {
 
-    @Autowired
-    private lateinit var libraryBookRepository: LibraryBookRepository
+	@Autowired
+	private lateinit var libraryBookRepository: LibraryBookRepository
 
-    @Autowired
-    private lateinit var bookRepository: BookRepository
+	@Autowired
+	private lateinit var bookRepository: BookRepository
 
-    @Test
-    fun givenLibraryBook_whenSaveAndFindById_thenLibraryBookIsFound() {
-        val book = Book(title = "Test Book", isbn = "1", publicationDate = LocalDate.now())
-        val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId)
-        val id = libraryBookRepository.save(libraryBook)
-        val savedLibraryBook = libraryBookRepository.findById(id)
-        assertNotNull(savedLibraryBook)
-        assertEquals(bookId.toInt(), savedLibraryBook?.bookId)
-    }
+	private var libraryBookId: Long = 0
 
-    @Test
-    fun givenLibraryBook_whenDelete_thenLibraryBookIsDeleted() {
-		val book = Book(title = "Test Book", isbn = "2", publicationDate = LocalDate.now())
-        val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId)
-        val id = libraryBookRepository.save(libraryBook)
-        libraryBookRepository.deleteById(id)
-        assertNull(libraryBookRepository.findById(id))
-    }
+	companion object {
+		private var libraryBook: LibraryBook? = null
 
-    @Test
-    fun givenLibraryBook_whenUpdateLibraryBook_thenLibraryBookIsUpdated() {
-		val book = Book(title = "Test Book", isbn = "3", publicationDate = LocalDate.now())
-        val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId)
-        val id = libraryBookRepository.save(libraryBook)
-		val updatedBook = book.copy(id = bookId, title = "Updated Test Book")
-        val updatedBookId = bookRepository.save(updatedBook)
-        val updatedLibraryBook = libraryBook.copy(id = id, bookId = updatedBookId)
-        libraryBookRepository.save(updatedLibraryBook)
-        val foundLibraryBook = libraryBookRepository.findById(id)
-        assertNotNull(foundLibraryBook)
-        assertEquals(updatedBookId.toInt(), foundLibraryBook?.bookId)
-    }
+		@Synchronized
+		fun createLibraryBook(
+			bookRepository: BookRepository,
+			libraryBookRepository: LibraryBookRepository,
+			title: String,
+			isbn: String,
+			publicationDate: LocalDate
+		): LibraryBook {
+			if (libraryBook == null) {
+				val book = bookRepository.create(Book(title = title, isbn = isbn, publicationDate = publicationDate))
+				libraryBook = libraryBookRepository.create(LibraryBook(bookId = book.id!!))
+			}
+			return libraryBook!!
+		}
 
-    @Test
-    fun givenLibraryBooks_whenFindAll_thenAllLibraryBooksAreFound() {
-		val book1 = Book(title = "Test Book 1", isbn = "4", publicationDate = LocalDate.now())
-		val book2 = Book(title = "Test Book 2", isbn = "5", publicationDate = LocalDate.now())
-        val bookId1 = bookRepository.save(book1)
-        val bookId2 = bookRepository.save(book2)
-        val libraryBook1 = LibraryBook(bookId = bookId1)
-        val libraryBook2 = LibraryBook(bookId = bookId2)
-        libraryBookRepository.save(libraryBook1)
-        libraryBookRepository.save(libraryBook2)
-        val libraryBooks = libraryBookRepository.findAll()
-        assertTrue(libraryBooks.any { it.bookId == bookId1 })
-        assertTrue(libraryBooks.any { it.bookId == bookId2 })
-    }
+		fun createNewBook(
+			bookRepository: BookRepository,
+			title: String,
+			isbn: String,
+			publicationDate: LocalDate
+		): Book {
+			return bookRepository.create(Book(title = title, isbn = isbn, publicationDate = publicationDate))
+		}
+	}
 
-    @Test
-    fun givenLibraryBook_whenExistsById_thenLibraryBookExists() {
-		val book = Book(title = "Test Book", isbn = "6", publicationDate = LocalDate.now())
-        val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId)
-        val id = libraryBookRepository.save(libraryBook)
-        assertTrue(libraryBookRepository.existsById(id))
-        libraryBookRepository.deleteById(id)
-        assertFalse(libraryBookRepository.existsById(id))
-    }
+	@BeforeEach
+	fun setup() {
+		libraryBookId = createLibraryBook(
+			bookRepository,
+			libraryBookRepository,
+			"Test Book",
+			"1234567890123",
+			LocalDate.of(2020, 1, 1)
+		).id!!
+	}
 
-    @Test
-    fun givenNonExistentId_whenDelete_thenNoExceptionThrown() {
-        val nonExistentId = 9999L
-        val result = runCatching { libraryBookRepository.deleteById(nonExistentId) }
-        assertTrue(result.isSuccess)
-    }
+	@Test
+	fun givenLibraryBook_whenSave_thenCanBeFoundById() {
+		val savedLibraryBook = libraryBookRepository.create(LibraryBook(bookId = libraryBookId))
+		val foundLibraryBook = libraryBookRepository.findById(savedLibraryBook.id!!)
+		assertNotNull(foundLibraryBook)
+		assertEquals(libraryBookId, foundLibraryBook?.bookId)
+	}
 
-    @Test
-    fun givenNonExistentId_whenFindById_thenLibraryBookIsNotFound() {
-        val nonExistentId = 9999L
-        val libraryBook = libraryBookRepository.findById(nonExistentId)
-        assertNull(libraryBook)
-    }
+	@Test
+	fun givenLibraryBook_whenDelete_thenCannotBeFoundById() {
+		val savedLibraryBook = libraryBookRepository.create(LibraryBook(bookId = libraryBookId))
+		libraryBookRepository.deleteById(savedLibraryBook.id!!)
+		val foundLibraryBook = libraryBookRepository.findById(savedLibraryBook.id!!)
+		assertNull(foundLibraryBook)
+	}
 
-    @Test
-    fun givenNonExistentId_whenExistsById_thenLibraryBookDoesNotExist() {
-        val nonExistentId = 9999L
-        assertFalse(libraryBookRepository.existsById(nonExistentId))
-    }
+	@Test
+	fun givenLibraryBook_whenUpdate_thenUpdatedValuesCanBeFound() {
+		val savedLibraryBook = libraryBookRepository.create(LibraryBook(bookId = libraryBookId))
+		val newBook = createNewBook(bookRepository, "Test Book 2", "1234567890125", LocalDate.of(2020, 2, 1))
+		val updatedLibraryBook = savedLibraryBook.copy(bookId = newBook.id!!)
+		libraryBookRepository.update(updatedLibraryBook)
+		val foundLibraryBook = libraryBookRepository.findById(savedLibraryBook.id!!)
+		assertNotNull(foundLibraryBook)
+		assertEquals(newBook.id, foundLibraryBook?.bookId)
+	}
+
+	@Test
+	fun givenMultipleLibraryBooks_whenFindAll_thenAllLibraryBooksAreReturned() {
+		val libraryBook1 = LibraryBook(bookId = libraryBookId)
+		val newBook = createNewBook(bookRepository, "Test Book 2", "1234567890124", LocalDate.of(2020, 2, 1))
+		val libraryBook2 = LibraryBook(bookId = newBook.id!!)
+		libraryBookRepository.create(libraryBook1)
+		libraryBookRepository.create(libraryBook2)
+		val libraryBooks = libraryBookRepository.findAll()
+		assertTrue(libraryBooks.any { it.bookId == libraryBookId })
+		assertTrue(libraryBooks.any { it.bookId == newBook.id })
+	}
+
+	@Test
+	fun givenLibraryBookWithInvalidBookId_whenSave_thenThrowsException() {
+		val invalidLibraryBook = LibraryBook(bookId = -1L)
+		val exception = assertThrows<IllegalArgumentException> {
+			libraryBookRepository.create(invalidLibraryBook)
+		}
+		assertNotNull(exception)
+	}
 }

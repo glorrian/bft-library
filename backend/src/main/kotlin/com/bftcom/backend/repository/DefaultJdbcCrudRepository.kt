@@ -1,99 +1,61 @@
 package com.bftcom.backend.repository
 
-import com.bftcom.backend.entity.Entity
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.RowMapper
-import org.springframework.jdbc.support.GeneratedKeyHolder
-import org.springframework.jdbc.support.KeyHolder
-import java.sql.PreparedStatement
-import kotlin.reflect.full.memberProperties
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert
+import java.sql.ResultSet
+
 @Suppress("SqlSourceToSinkFlow")
-abstract class DefaultJdbcCrudRepository<T : Entity>(
-	private val jdbcTemplate: JdbcTemplate,
-	private val tableName: String,
-	private val clazz: Class<T>
+abstract class DefaultJdbcCrudRepository<T>(
+	protected val jdbcTemplate: JdbcTemplate,
+	private val tableName: String, private val idColumnName: String = "id"
 ) : CrudRepository<T, Long> {
 
-	protected abstract val rowMapper: RowMapper<T>
+	protected abstract fun mapRow(rs: ResultSet): T
 
-	override fun save(entity: T): Long {
-		return if (entity.id == 0L) {
-			insert(entity)
-		} else {
-			update(entity)
-			entity.id
-		}
-	}
+	protected abstract fun entityToParams(entity: T): Map<String, Any?>
 
-	override fun findById(id: Long): T? {
-		val sql = "SELECT * FROM $tableName WHERE id = ?"
-		return jdbcTemplate.query(sql, rowMapper, id).firstOrNull()
-	}
+	protected abstract fun validate(entity: T)
+
+	protected abstract fun getEntityId(entity: T): Long?
+
+	protected abstract fun setEntityId(entity: T, generatedId: Long): T
 
 	override fun findAll(): List<T> {
 		val sql = "SELECT * FROM $tableName"
-		return jdbcTemplate.query(sql, rowMapper)
+		return jdbcTemplate.query(sql) { rs, _ -> mapRow(rs) }
 	}
 
-	override fun deleteById(id: Long): Boolean {
-		val sql = "DELETE FROM $tableName WHERE id = ?"
-		val affectedRows = jdbcTemplate.update(sql, id)
-		return affectedRows > 0
+	override fun findById(id: Long): T? {
+		val sql = "SELECT * FROM $tableName WHERE $idColumnName = ?"
+		return jdbcTemplate.query(sql, { rs, _ -> mapRow(rs) }, id).firstOrNull()
 	}
 
-	override fun existsById(id: Long): Boolean {
-		val sql = "SELECT COUNT(*) FROM $tableName WHERE id = ?"
-		val res = jdbcTemplate.queryForObject(sql, Int::class.java, id)
-		return res != null && res > 0
+	override fun create(entity: T): T {
+		val insert = SimpleJdbcInsert(jdbcTemplate).withTableName(tableName).usingGeneratedKeyColumns(idColumnName)
+		validate(entity)
+		val params = entityToParams(entity)
+		val generatedId = insert.executeAndReturnKey(params).toLong()
+		return setEntityId(entity, generatedId)
 	}
 
+	override fun update(entity: T): T {
+		val entityId = getEntityId(entity) ?: throw IllegalArgumentException("Cannot update entity without ID")
 
-	private fun getColumns(entity: T): Map<String, Any?> {
-		return clazz.kotlin.memberProperties
-			.filter { it.name != "id" }
-			.associate { it.name.toSnakeCase() to it.get(entity) }
-	}
+		val params = entityToParams(entity)
+		if (params.isEmpty()) {
+			return entity
+		}
+		val setClause = params.keys.joinToString { "$it = ?" }
+		val sql = "UPDATE $tableName SET $setClause WHERE $idColumnName = ?"
 
-	private fun insert(entity: T): Long {
-		val columns = getColumns(entity).keys.joinToString(", ")
-		val placeholders = getColumns(entity).keys.joinToString(", ") { "?" }
-		val sql = "INSERT INTO $tableName ($columns) VALUES ($placeholders)"
-
-		val values = getColumns(entity).values.toTypedArray()
-
-		val keyHolder: KeyHolder = GeneratedKeyHolder()
-
-		jdbcTemplate.update({ connection ->
-			val ps: PreparedStatement = connection.prepareStatement(sql, arrayOf("id"))
-			for (i in values.indices) {
-				ps.setObject(i + 1, values[i])
-			}
-			ps
-		}, keyHolder)
-
-		return keyHolder.key?.toLong()
-			?: throw RuntimeException("Failed to retrieve id of the inserted entity")
-	}
-
-	private fun update(entity: T) {
-		val columns = getColumns(entity).keys.joinToString(", ") { "$it = ?" }
-		val sql = "UPDATE $tableName SET $columns WHERE id = ?"
-
-		val values = getColumns(entity).values.toMutableList()
-		values.add(entity.id)
-
+		val values = params.values.toList() + entityId
 		jdbcTemplate.update(sql, *values.toTypedArray())
+
+		return entity
 	}
 
-	private fun String.toSnakeCase(): String {
-		return this.fold(StringBuilder()) { acc, c ->
-			if (c.isUpperCase()) {
-				if (acc.isNotEmpty()) acc.append("_")
-				acc.append(c.lowercaseChar())
-			} else {
-				acc.append(c)
-			}
-			acc
-		}.toString()
+	override fun deleteById(id: Long) {
+		val sql = "DELETE FROM $tableName WHERE $idColumnName = ?"
+		jdbcTemplate.update(sql, id)
 	}
 }

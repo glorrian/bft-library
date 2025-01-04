@@ -1,10 +1,12 @@
 package com.bftcom.backend.repository
 
+import com.bftcom.backend.entity.Book
 import com.bftcom.backend.entity.BorrowingRecord
 import com.bftcom.backend.entity.LibraryBook
-import com.bftcom.backend.entity.Book
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
@@ -21,96 +23,114 @@ class BorrowingRecordRepositoryTest {
     @Autowired
     private lateinit var bookRepository: BookRepository
 
-    @Test
-    fun givenBorrowingRecord_whenSaveAndFindById_thenBorrowingRecordIsFound() {
-        val book = Book(title = "Test Book", isbn = "1", publicationDate = LocalDate.now())
-        val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId)
-        val libraryBookId = libraryBookRepository.save(libraryBook)
-        val borrowingRecord = BorrowingRecord(libraryBookId = libraryBookId, borrowDate = LocalDate.now())
-        val id = borrowingRecordRepository.save(borrowingRecord)
-        val savedBorrowingRecord = borrowingRecordRepository.findById(id)
-        assertNotNull(savedBorrowingRecord)
-        assertEquals(libraryBookId, savedBorrowingRecord?.libraryBookId)
-        assertEquals(LocalDate.now(), savedBorrowingRecord?.borrowDate)
+    private var libraryBookId: Long = 0
+
+	companion object {
+		private var libraryBook: LibraryBook? = null
+
+		@Synchronized
+		fun createLibraryBook(
+			bookRepository: BookRepository,
+			libraryBookRepository: LibraryBookRepository,
+			title: String,
+			isbn: String,
+			publicationDate: LocalDate
+		): LibraryBook {
+			if (libraryBook == null) {
+				val book = bookRepository.create(Book(title = title, isbn = isbn, publicationDate = publicationDate))
+				libraryBook = libraryBookRepository.create(LibraryBook(bookId = book.id!!))
+			}
+			return libraryBook!!
+		}
+
+		fun createNewBook(
+			bookRepository: BookRepository,
+			title: String,
+			isbn: String,
+			publicationDate: LocalDate
+		): Book {
+			return bookRepository.create(Book(title = title, isbn = isbn, publicationDate = publicationDate))
+		}
+	}
+
+	@BeforeEach
+    fun setup() {
+        libraryBookId = createLibraryBook(bookRepository, libraryBookRepository, "Test Book", "1234567890123", LocalDate.of(2020, 1, 1)).id!!
     }
 
     @Test
-    fun givenBorrowingRecord_whenDelete_thenBorrowingRecordIsDeleted() {
-        val book = Book(title = "Test Book", isbn = "2", publicationDate = LocalDate.now())
-        val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId)
-        val libraryBookId = libraryBookRepository.save(libraryBook)
-        val borrowingRecord = BorrowingRecord(libraryBookId = libraryBookId, borrowDate = LocalDate.now())
-        val id = borrowingRecordRepository.save(borrowingRecord)
-        borrowingRecordRepository.deleteById(id)
-        assertNull(borrowingRecordRepository.findById(id))
+    fun givenBorrowingRecord_whenSave_thenCanBeFoundById() {
+        val borrowingRecord = BorrowingRecord(
+            libraryBookId = libraryBookId, borrowDate = LocalDate.of(2023, 1, 1), returnDate = LocalDate.of(2023, 1, 10)
+        )
+        val savedRecord = borrowingRecordRepository.create(borrowingRecord)
+        val foundRecord = borrowingRecordRepository.findById(savedRecord.id!!)
+        assertNotNull(foundRecord)
+        assertEquals(libraryBookId, foundRecord?.libraryBookId)
     }
 
     @Test
-    fun givenBorrowingRecord_whenUpdateBorrowingRecord_thenBorrowingRecordIsUpdated() {
-        val book = Book(title = "Test Book", isbn = "3", publicationDate = LocalDate.now())
-        val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId)
-        val libraryBookId = libraryBookRepository.save(libraryBook)
-        val borrowingRecord = BorrowingRecord(libraryBookId = libraryBookId, borrowDate = LocalDate.now())
-        val id = borrowingRecordRepository.save(borrowingRecord)
-        val updatedBorrowingRecord = borrowingRecord.copy(id = id, borrowDate = LocalDate.now().plusDays(1))
-        borrowingRecordRepository.save(updatedBorrowingRecord)
-        val foundBorrowingRecord = borrowingRecordRepository.findById(id)
-        assertNotNull(foundBorrowingRecord)
-        assertEquals(LocalDate.now().plusDays(1), foundBorrowingRecord?.borrowDate)
+    fun givenBorrowingRecord_whenDelete_thenCannotBeFoundById() {
+        val borrowingRecord = BorrowingRecord(
+            libraryBookId = libraryBookId, borrowDate = LocalDate.of(2023, 2, 1), returnDate = LocalDate.of(2023, 2, 10)
+        )
+        val savedRecord = borrowingRecordRepository.create(borrowingRecord)
+        borrowingRecordRepository.deleteById(savedRecord.id!!)
+        val foundRecord = borrowingRecordRepository.findById(savedRecord.id!!)
+        assertNull(foundRecord)
     }
 
     @Test
-    fun givenBorrowingRecords_whenFindAll_thenAllBorrowingRecordsAreFound() {
-        val book1 = Book(title = "Test Book 1", isbn = "4", publicationDate = LocalDate.now())
-        val book2 = Book(title = "Test Book 2", isbn = "5", publicationDate = LocalDate.now())
-        val bookId1 = bookRepository.save(book1)
-        val bookId2 = bookRepository.save(book2)
-        val libraryBook1 = LibraryBook(bookId = bookId1)
-        val libraryBook2 = LibraryBook(bookId = bookId2)
-        val libraryBookId1 = libraryBookRepository.save(libraryBook1)
-        val libraryBookId2 = libraryBookRepository.save(libraryBook2)
-        val borrowingRecord1 = BorrowingRecord(libraryBookId = libraryBookId1, borrowDate = LocalDate.now())
-        val borrowingRecord2 = BorrowingRecord(libraryBookId = libraryBookId2, borrowDate = LocalDate.now())
-        borrowingRecordRepository.save(borrowingRecord1)
-        borrowingRecordRepository.save(borrowingRecord2)
-        val borrowingRecords = borrowingRecordRepository.findAll()
-        assertTrue(borrowingRecords.any { it.libraryBookId == libraryBookId1 })
-        assertTrue(borrowingRecords.any { it.libraryBookId == libraryBookId2 })
+    fun givenBorrowingRecord_whenUpdate_thenUpdatedValuesCanBeFound() {
+        val borrowingRecord = BorrowingRecord(
+            libraryBookId = libraryBookId, borrowDate = LocalDate.of(2023, 3, 1), returnDate = LocalDate.of(2023, 3, 10)
+        )
+        val savedRecord = borrowingRecordRepository.create(borrowingRecord)
+        val newBook = createNewBook(bookRepository, "Test Book 2", "1234567890125", LocalDate.of(2020, 2, 1))
+        val newLibraryBook = libraryBookRepository.create(LibraryBook(bookId = newBook.id!!))
+        val updatedRecord = savedRecord.copy(libraryBookId = newLibraryBook.id!!)
+        borrowingRecordRepository.update(updatedRecord)
+        val foundRecord = borrowingRecordRepository.findById(savedRecord.id!!)
+        assertNotNull(foundRecord)
+        assertEquals(newLibraryBook.id, foundRecord?.libraryBookId)
     }
 
     @Test
-    fun givenBorrowingRecord_whenExistsById_thenBorrowingRecordExists() {
-        val book = Book(title = "Test Book", isbn = "6", publicationDate = LocalDate.now())
-        val bookId = bookRepository.save(book)
-        val libraryBook = LibraryBook(bookId = bookId)
-        val libraryBookId = libraryBookRepository.save(libraryBook)
-        val borrowingRecord = BorrowingRecord(libraryBookId = libraryBookId, borrowDate = LocalDate.now())
-        val id = borrowingRecordRepository.save(borrowingRecord)
-        assertTrue(borrowingRecordRepository.existsById(id))
-        borrowingRecordRepository.deleteById(id)
-        assertFalse(borrowingRecordRepository.existsById(id))
+    fun givenMultipleBorrowingRecords_whenFindAll_thenAllRecordsAreReturned() {
+        val record1 = BorrowingRecord(
+            libraryBookId = libraryBookId, borrowDate = LocalDate.of(2023, 4, 1), returnDate = LocalDate.of(2023, 4, 10)
+        )
+        val newBook = createNewBook(bookRepository, "Test Book 2", "1234567890124", LocalDate.of(2020, 2, 1))
+        val newLibraryBook = libraryBookRepository.create(LibraryBook(bookId = newBook.id!!))
+        val record2 = BorrowingRecord(
+            libraryBookId = newLibraryBook.id!!, borrowDate = LocalDate.of(2023, 5, 1), returnDate = LocalDate.of(2023, 5, 10)
+        )
+        borrowingRecordRepository.create(record1)
+        borrowingRecordRepository.create(record2)
+        val records = borrowingRecordRepository.findAll()
+        assertTrue(records.any { it.libraryBookId == libraryBookId })
+        assertTrue(records.any { it.libraryBookId == newLibraryBook.id })
     }
 
     @Test
-    fun givenNonExistentId_whenDelete_thenNoExceptionThrown() {
-        val nonExistentId = 9999L
-        val result = runCatching { borrowingRecordRepository.deleteById(nonExistentId) }
-        assertTrue(result.isSuccess)
+    fun givenBorrowingRecordWithInvalidLibraryBookId_whenSave_thenThrowsException() {
+        val borrowingRecord = BorrowingRecord(
+            libraryBookId = -1L, borrowDate = LocalDate.of(2023, 6, 1), returnDate = LocalDate.of(2023, 6, 10)
+        )
+        val exception = assertThrows<Exception> {
+            borrowingRecordRepository.create(borrowingRecord)
+        }
+        assertNotNull(exception)
     }
 
     @Test
-    fun givenNonExistentId_whenFindById_thenBorrowingRecordIsNotFound() {
-        val nonExistentId = 9999L
-        val borrowingRecord = borrowingRecordRepository.findById(nonExistentId)
-        assertNull(borrowingRecord)
-    }
-
-    @Test
-    fun givenNonExistentId_whenExistsById_thenBorrowingRecordDoesNotExist() {
-        val nonExistentId = 9999L
-        assertFalse(borrowingRecordRepository.existsById(nonExistentId))
+    fun givenBorrowingRecordWithInvalidDates_whenSave_thenThrowsException() {
+        val borrowingRecord = BorrowingRecord(
+            libraryBookId = libraryBookId, borrowDate = LocalDate.of(2023, 7, 10), returnDate = LocalDate.of(2023, 7, 1)
+        )
+        val exception = assertThrows<Exception> {
+            borrowingRecordRepository.create(borrowingRecord)
+        }
+        assertNotNull(exception)
     }
 }

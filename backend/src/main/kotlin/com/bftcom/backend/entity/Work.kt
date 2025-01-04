@@ -1,7 +1,8 @@
 package com.bftcom.backend.entity
 
 data class Work(
-	override var id: Long = 0,
+	val id: Long? = null,
 	val title: String,
-	val genreId: Long
-) : Entity
+	val genreId: Long?,
+	val authorsIds: List<Long>?
+)
