@@ -64,32 +64,8 @@ class WorkRepository(
 		super.deleteById(id)
 	}
 
-	fun findAllLazy(): List<Work> {
-		val sql = "SELECT id, title, genre_id FROM works"
-		return jdbc.query(sql) { rs, _ ->
-			Work(
-				id = rs.getLong("id"),
-				title = rs.getString("title"),
-				genreId = rs.getLong("genre_id").takeIf { it != 0L },
-				authorsIds = null
-			)
-		}
-	}
-
-	fun findByIdLazy(id: Long): Work? {
-		val sql = "SELECT id, title, genre_id FROM works WHERE id = ?"
-		return jdbc.query(sql, { rs, _ ->
-			Work(
-				id = rs.getLong("id"),
-				title = rs.getString("title"),
-				genreId = rs.getLong("genre_id").takeIf { it != 0L },
-				authorsIds = null
-			)
-		}, id).firstOrNull()
-	}
-
 	fun findAllEager(): List<Work> {
-		val works = findAllLazy()
+		val works = findAll()
 		val workIds = works.mapNotNull { it.id }
 		val mapAuthors = loadAuthorsIdsForWorks(workIds)
 		return works.map { w ->
@@ -100,7 +76,7 @@ class WorkRepository(
 	}
 
 	fun findByIdEager(id: Long): Work? {
-		val w = findByIdLazy(id) ?: return null
+		val w = findById(id) ?: return null
 		val mapAuthors = loadAuthorsIdsForWorks(listOf(id))
 		val aIds = mapAuthors[id] ?: emptyList()
 		return w.copy(authorsIds = aIds)

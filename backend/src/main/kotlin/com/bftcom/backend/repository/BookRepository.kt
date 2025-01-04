@@ -65,4 +65,54 @@ class BookRepository(
 		jdbc.update("DELETE FROM book_works WHERE book_id = ?", id)
 		super.deleteById(id)
 	}
+
+	fun findByIdEager(id: Long): Book? {
+		val book = findById(id) ?: return null
+		val works = loadWorksForBook(id)
+		return book.copy(worksIds = works)
+	}
+
+	fun findAllEager(): List<Book> {
+		val books = findAll()
+
+		val bookIds = books.mapNotNull { it.id }
+		if (bookIds.isEmpty()) {
+			return books
+		}
+
+		val worksMap = loadWorksForBooks(bookIds)
+
+		return books.map { b ->
+			b.copy(worksIds = worksMap[b.id] ?: emptyList())
+		}
+	}
+
+	private fun loadWorksForBook(bookId: Long): List<Long> {
+		val sql = """
+			SELECT work_id 
+			  FROM book_works
+			 WHERE book_id = ?
+		""".trimIndent()
+
+		val works = mutableListOf<Long>()
+		jdbc.query(sql, { rs, _ -> rs.getLong("work_id") }, bookId).forEach { works.add(it) }
+		return works
+	}
+
+	private fun loadWorksForBooks(bookIds: List<Long>): Map<Long, List<Long>> {
+		val inClause = bookIds.joinToString(", ")
+		val sql = """
+            SELECT book_id, work_id 
+              FROM book_works
+             WHERE book_id IN ($inClause)
+        """.trimIndent()
+
+		val map = mutableMapOf<Long, MutableList<Long>>()
+		jdbcTemplate.query(sql) { rs ->
+			val bId = rs.getLong("book_id")
+			val wId = rs.getLong("work_id")
+			map.computeIfAbsent(bId) { mutableListOf() }.add(wId)
+		}
+		return map
+	}
 }
