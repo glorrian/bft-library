@@ -1,6 +1,7 @@
 [versions]
 kotlin = "1.9.25"
 spring-boot = "3.4.1"
+spring-doc = "2.8.0"
 dotenv-kotlin = "6.5.0"
 jackson = "2.18.2"
 liquibase = "4.29.2"
@@ -9,6 +10,7 @@ postgresql = "42.7.4"
 junit-platform-launcher = "1.11.4"
 kotest = "5.9.1"
 mockito = "5.4.0"
+
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -20,6 +22,7 @@ dependency-management = { id = "io.spring.dependency-management", version = "1.1
 spring-boot-starter-artemis = { module = "org.springframework.boot:spring-boot-starter-artemis", version.ref = "spring-boot" }
 spring-boot-starter-jdbc = { module = "org.springframework.boot:spring-boot-starter-jdbc", version.ref = "spring-boot" }
 spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref = "spring-boot" }
+spring-doc-starter-openapi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "spring-doc" }
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }

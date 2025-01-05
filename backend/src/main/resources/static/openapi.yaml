@@ -1,0 +1,1417 @@
+openapi: 3.0.3
+info:
+  title: Library API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: Genres
+  - name: Authors
+  - name: Works
+  - name: Books
+  - name: Readers
+  - name: LibraryBooks
+  - name: BorrowingRecords
+  - name: Reports
+
+paths:
+  ######################################################
+  #                    GENRES
+  ######################################################
+  /genres:
+    get:
+      tags: [Genres]
+      summary: Get all genres
+      operationId: getGenres
+      responses:
+        '200':
+          description: A list of genres
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Genre'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    post:
+      tags: [Genres]
+      summary: Create a new genre
+      operationId: createGenre
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenreCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genre'
+        '400':
+          description: Bad request (missing or invalid fields)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '409':
+          description: Conflict (e.g. genre already exists)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /genres/{id}:
+    get:
+      tags: [Genres]
+      summary: Get genre by ID
+      operationId: getGenreById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Genre ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A single genre
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genre'
+        '404':
+          description: Genre not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    put:
+      tags: [Genres]
+      summary: Update an existing genre
+      operationId: updateGenre
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Genre ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenreUpdate'
+      responses:
+        '200':
+          description: Updated genre
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genre'
+        '400':
+          description: Bad request (invalid data)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Genre not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      tags: [Genres]
+      summary: Delete a genre
+      operationId: deleteGenre
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Genre ID
+      responses:
+        '204':
+          description: Deleted successfully
+        '404':
+          description: Genre not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  ######################################################
+  #                    AUTHORS
+  ######################################################
+  /authors:
+    get:
+      tags: [Authors]
+      summary: Get all authors
+      operationId: getAuthors
+      responses:
+        '200':
+          description: A list of authors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Author'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    post:
+      tags: [Authors]
+      summary: Create a new author
+      operationId: createAuthor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /authors/{id}:
+    get:
+      tags: [Authors]
+      summary: Get author by ID
+      operationId: getAuthorById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Author ID
+      responses:
+        '200':
+          description: A single author
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    put:
+      tags: [Authors]
+      summary: Update an existing author
+      operationId: updateAuthor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Author ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorUpdate'
+      responses:
+        '200':
+          description: Updated author
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '404':
+          description: Author not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      tags: [Authors]
+      summary: Delete an author
+      operationId: deleteAuthor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Author ID
+      responses:
+        '204':
+          description: Deleted successfully
+        '404':
+          description: Author not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  ######################################################
+  #                    WORKS
+  ######################################################
+  /works:
+    get:
+      tags: [Works]
+      summary: Get all works
+      operationId: getWorks
+      responses:
+        '200':
+          description: A list of works
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Work'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    post:
+      tags: [Works]
+      summary: Create a new work
+      operationId: createWork
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /works/{id}:
+    get:
+      tags: [Works]
+      summary: Get work by ID
+      operationId: getWorkById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Work ID
+      responses:
+        '200':
+          description: A single work
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    put:
+      tags: [Works]
+      summary: Update an existing work
+      operationId: updateWork
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Work ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkUpdate'
+      responses:
+        '200':
+          description: Updated work
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+        '404':
+          description: Work not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      tags: [Works]
+      summary: Delete a work
+      operationId: deleteWork
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Work ID
+      responses:
+        '204':
+          description: Deleted successfully
+        '404':
+          description: Work not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  ######################################################
+  #                    BOOKS
+  ######################################################
+  /books:
+    get:
+      tags: [Books]
+      summary: Get all books
+      operationId: getBooks
+      responses:
+        '200':
+          description: A list of books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    post:
+      tags: [Books]
+      summary: Create a new book
+      operationId: createBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '409':
+          description: Conflict (e.g. ISBN already exists)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /books/{id}:
+    get:
+      tags: [Books]
+      summary: Get book by ID
+      operationId: getBookById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Book ID
+      responses:
+        '200':
+          description: A single book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    put:
+      tags: [Books]
+      summary: Update an existing book
+      operationId: updateBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Book ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookUpdate'
+      responses:
+        '200':
+          description: Updated book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      tags: [Books]
+      summary: Delete a book
+      operationId: deleteBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Book ID
+      responses:
+        '204':
+          description: Deleted successfully
+        '404':
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  ######################################################
+  #                   READERS
+  ######################################################
+  /readers:
+    get:
+      tags: [Readers]
+      summary: Get all readers
+      operationId: getReaders
+      responses:
+        '200':
+          description: A list of readers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reader'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    post:
+      tags: [Readers]
+      summary: Create a new reader
+      operationId: createReader
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReaderCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reader'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '409':
+          description: Conflict (e.g. email already exists)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /readers/{id}:
+    get:
+      tags: [Readers]
+      summary: Get reader by ID
+      operationId: getReaderById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Reader ID
+      responses:
+        '200':
+          description: A single reader
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reader'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    put:
+      tags: [Readers]
+      summary: Update an existing reader
+      operationId: updateReader
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Reader ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReaderUpdate'
+      responses:
+        '200':
+          description: Updated reader
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reader'
+        '404':
+          description: Reader not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      tags: [Readers]
+      summary: Delete a reader
+      operationId: deleteReader
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Reader ID
+      responses:
+        '204':
+          description: Deleted successfully
+        '404':
+          description: Reader not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  ######################################################
+  #               LIBRARY BOOKS
+  ######################################################
+  /library-books:
+    get:
+      tags: [LibraryBooks]
+      summary: Get all library books
+      operationId: getLibraryBooks
+      responses:
+        '200':
+          description: A list of library books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LibraryBook'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    post:
+      tags: [LibraryBooks]
+      summary: Create a new library book
+      operationId: createLibraryBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LibraryBookCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LibraryBook'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /library-books/{id}:
+    get:
+      tags: [LibraryBooks]
+      summary: Get library book by ID
+      operationId: getLibraryBookById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: LibraryBook ID
+      responses:
+        '200':
+          description: A single library book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LibraryBook'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    put:
+      tags: [LibraryBooks]
+      summary: Update an existing library book
+      operationId: updateLibraryBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: LibraryBook ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LibraryBookUpdate'
+      responses:
+        '200':
+          description: Updated library book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LibraryBook'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      tags: [LibraryBooks]
+      summary: Delete a library book
+      operationId: deleteLibraryBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: LibraryBook ID
+      responses:
+        '204':
+          description: Deleted successfully
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  ######################################################
+  #         ISSUE / RETURN (library books)
+  ######################################################
+  /library-books/{id}/issue:
+    post:
+      tags: [LibraryBooks]
+      summary: Issue a library book
+      operationId: issueLibraryBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the library book to issue
+        - name: readerId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: The ID of the reader
+        - name: borrowDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Borrow date (if not provided, server can use today)
+      responses:
+        '200':
+          description: Library book issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Bad request (missing data)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Library book (or reader) not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '409':
+          description: Already issued or conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /library-books/{id}/return:
+    post:
+      tags: [LibraryBooks]
+      summary: Return a library book
+      operationId: returnLibraryBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the library book to return
+      responses:
+        '200':
+          description: Library book returned (returnDate set)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not found or not issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  ######################################################
+  #      BORROWING RECORDS (CRUD)
+  ######################################################
+  /borrowing-records:
+    get:
+      tags: [BorrowingRecords]
+      summary: Get all borrowing records
+      operationId: getBorrowingRecords
+      responses:
+        '200':
+          description: A list of borrowing records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BorrowingRecord'
+    post:
+      tags: [BorrowingRecords]
+      summary: Create a new borrowing record
+      operationId: createBorrowingRecord
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BorrowingRecordCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BorrowingRecord'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /borrowing-records/{id}:
+    get:
+      tags: [BorrowingRecords]
+      summary: Get borrowing record by ID
+      operationId: getBorrowingRecordById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: BorrowingRecord ID
+      responses:
+        '200':
+          description: A single borrowing record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BorrowingRecord'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    put:
+      tags: [BorrowingRecords]
+      summary: Update an existing borrowing record
+      operationId: updateBorrowingRecord
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: BorrowingRecord ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BorrowingRecordUpdate'
+      responses:
+        '200':
+          description: Updated borrowing record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BorrowingRecord'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      tags: [BorrowingRecords]
+      summary: Delete a borrowing record
+      operationId: deleteBorrowingRecord
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: BorrowingRecord ID
+      responses:
+        '204':
+          description: Deleted successfully
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  ######################################################
+  #                   REPORTS
+  ######################################################
+  /reports/borrowings:
+    get:
+      tags: [Reports]
+      summary: Get borrowing report
+      operationId: getBorrowingReport
+      parameters:
+        - name: libraryBookId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: readerId
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of borrowing records (filtered)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BorrowingRecordDto'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+######################################################
+#                   COMPONENTS
+######################################################
+components:
+  schemas:
+    ######################################################
+    #                   GENRE
+    ######################################################
+    Genre:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      required:
+        - id
+        - name
+
+    GenreCreate:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+
+    GenreUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+
+    ######################################################
+    #                   AUTHOR
+    ######################################################
+    Author:
+      type: object
+      properties:
+        id:
+          type: integer
+        fullName:
+          type: string
+        pseudonym:
+          type: string
+        birthDate:
+          type: string
+          format: date
+      required:
+        - id
+        - fullName
+        - birthDate
+
+    AuthorCreate:
+      type: object
+      properties:
+        fullName:
+          type: string
+        pseudonym:
+          type: string
+        birthDate:
+          type: string
+          format: date
+      required:
+        - fullName
+        - birthDate
+
+    AuthorUpdate:
+      type: object
+      properties:
+        fullName:
+          type: string
+        pseudonym:
+          type: string
+        birthDate:
+          type: string
+          format: date
+
+    ######################################################
+    #                   WORK
+    ######################################################
+    Work:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        genre:
+          $ref: '#/components/schemas/Genre'
+        authors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Author'
+      required:
+        - id
+        - title
+
+    WorkCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        genreId:
+          type: integer
+        authorIds:
+          type: array
+          items:
+            type: integer
+      required:
+        - title
+        - genreId
+
+    WorkUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        genreId:
+          type: integer
+        authorIds:
+          type: array
+          items:
+            type: integer
+
+    ######################################################
+    #                   BOOK
+    ######################################################
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        isbn:
+          type: string
+        publicationDate:
+          type: string
+          format: date
+        works:
+          type: array
+          items:
+            $ref: '#/components/schemas/Work'
+      required:
+        - id
+        - title
+        - isbn
+        - publicationDate
+
+    BookCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        isbn:
+          type: string
+        publicationDate:
+          type: string
+          format: date
+        workIds:
+          type: array
+          items:
+            type: integer
+      required:
+        - title
+        - isbn
+        - publicationDate
+
+    BookUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        isbn:
+          type: string
+        publicationDate:
+          type: string
+          format: date
+        workIds:
+          type: array
+          items:
+            type: integer
+
+    ######################################################
+    #                   READER
+    ######################################################
+    Reader:
+      type: object
+      properties:
+        id:
+          type: integer
+        fullName:
+          type: string
+        email:
+          type: string
+      required:
+        - id
+        - fullName
+        - email
+
+    ReaderCreate:
+      type: object
+      properties:
+        fullName:
+          type: string
+        email:
+          type: string
+      required:
+        - fullName
+        - email
+
+    ReaderUpdate:
+      type: object
+      properties:
+        fullName:
+          type: string
+        email:
+          type: string
+
+    ######################################################
+    #               LIBRARY BOOK
+    ######################################################
+    LibraryBook:
+      type: object
+      properties:
+        id:
+          type: integer
+        book:
+          $ref: '#/components/schemas/Book'
+      required:
+        - id
+        - book
+
+    LibraryBookCreate:
+      type: object
+      properties:
+        bookId:
+          type: integer
+      required:
+        - bookId
+
+    LibraryBookUpdate:
+      type: object
+      properties:
+        bookId:
+          type: integer
+
+    ######################################################
+    #         BORROWING RECORD (с датой возврата)
+    ######################################################
+    BorrowingRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        libraryBookId:
+          type: integer
+        borrowDate:
+          type: string
+          format: date
+        returnDate:
+          type: string
+          format: date
+          nullable: true
+      required:
+        - id
+        - libraryBookId
+        - borrowDate
+
+    BorrowingRecordCreate:
+      type: object
+      properties:
+        libraryBookId:
+          type: integer
+        borrowDate:
+          type: string
+          format: date
+        returnDate:
+          type: string
+          format: date
+          nullable: true
+      required:
+        - libraryBookId
+        - borrowDate
+
+    BorrowingRecordUpdate:
+      type: object
+      properties:
+        libraryBookId:
+          type: integer
+        borrowDate:
+          type: string
+          format: date
+        returnDate:
+          type: string
+          format: date
+          nullable: true
+
+    ######################################################
+    #   BORROWING RECORD DTO (для отчетов)
+    ######################################################
+    BorrowingRecordDto:
+      type: object
+      properties:
+        borrowingRecordId:
+          type: integer
+        libraryBookId:
+          type: integer
+        bookTitle:
+          type: string
+        readerId:
+          type: integer
+        readerFullName:
+          type: string
+        borrowDate:
+          type: string
+          format: date
+        returnDate:
+          type: string
+          format: date
+          nullable: true
+
+    ######################################################
+    #             ERROR MESSAGE
+    ######################################################
+    ErrorMessage:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        message:
+          type: string
+      required:
+        - message
+      example:
+        errorCode: "GENRE_ALREADY_EXISTS"
+        message: "Genre with this name already exists"

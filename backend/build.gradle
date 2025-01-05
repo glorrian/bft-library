@@ -24,6 +24,7 @@ dependencies {
 	implementation libs.spring.boot.starter.mail
 	implementation libs.spring.boot.starter.web
 	implementation libs.jackson.module.kotlin
+	implementation libs.spring.doc.starter.openapi
 	implementation libs.kotlin.reflect
 	implementation libs.liquibase.core
 	runtimeOnly libs.h2.database
