@@ -17,8 +17,23 @@ spring:
   artemis:
     mode: native
     broker-url: ${ARTEMIS_URL}
-    user: admin
-    password: admin
+    user: ${ARTEMIS_USER}
+    password: ${ARTEMIS_PASSWORD}
+
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT}
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: true
 
 
 
