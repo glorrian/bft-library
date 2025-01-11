@@ -55,7 +55,7 @@ class LibraryBookRepositoryTest {
 			bookRepository,
 			libraryBookRepository,
 			"Test Book",
-			"1234567890123",
+			"1234567890133",
 			LocalDate.of(2020, 1, 1)
 		).id!!
 	}
@@ -79,7 +79,7 @@ class LibraryBookRepositoryTest {
 	@Test
 	fun givenLibraryBook_whenUpdate_thenUpdatedValuesCanBeFound() {
 		val savedLibraryBook = libraryBookRepository.create(LibraryBook(bookId = libraryBookId))
-		val newBook = createNewBook(bookRepository, "Test Book 2", "1234567890125", LocalDate.of(2020, 2, 1))
+		val newBook = createNewBook(bookRepository, "Test Book 2", "1234567890135", LocalDate.of(2020, 2, 1))
 		val updatedLibraryBook = savedLibraryBook.copy(bookId = newBook.id!!)
 		libraryBookRepository.update(updatedLibraryBook)
 		val foundLibraryBook = libraryBookRepository.findById(savedLibraryBook.id!!)
@@ -90,7 +90,7 @@ class LibraryBookRepositoryTest {
 	@Test
 	fun givenMultipleLibraryBooks_whenFindAll_thenAllLibraryBooksAreReturned() {
 		val libraryBook1 = LibraryBook(bookId = libraryBookId)
-		val newBook = createNewBook(bookRepository, "Test Book 2", "1234567890124", LocalDate.of(2020, 2, 1))
+		val newBook = createNewBook(bookRepository, "Test Book 2", "1234567890134", LocalDate.of(2020, 2, 1))
 		val libraryBook2 = LibraryBook(bookId = newBook.id!!)
 		libraryBookRepository.create(libraryBook1)
 		libraryBookRepository.create(libraryBook2)

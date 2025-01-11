@@ -14,8 +14,16 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
-springdoc:
-  api-docs:
-    enabled: false
-  swagger-ui:
-    url: /openapi.yaml
+  artemis:
+    mode: native
+    broker-url: ${ARTEMIS_URL}
+    user: admin
+    password: admin
+
+
+
+library:
+  max-borrowing-days: 30
+  artemis:
+    reminder-queue-name: "reminder-queue"
+    return-queue-name: "return-queue"

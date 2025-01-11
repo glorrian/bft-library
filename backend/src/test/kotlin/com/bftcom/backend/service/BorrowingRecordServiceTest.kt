@@ -1,6 +1,7 @@
 package com.bftcom.backend.service
 
 import com.bftcom.backend.entity.BorrowingRecord
+import com.bftcom.backend.entity.Reader
 import com.bftcom.backend.repository.BorrowingRecordRepository
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.*
 import java.time.LocalDate
@@ -19,19 +19,21 @@ class BorrowingRecordServiceTest {
     @Mock
     private lateinit var borrowingRecordRepository: BorrowingRecordRepository
 
-    @InjectMocks
+	@InjectMocks
     private lateinit var borrowingRecordService: BorrowingRecordService
 
     private lateinit var borrowingRecord: BorrowingRecord
+    private lateinit var reader: Reader
 
     @BeforeEach
     fun setup() {
-        borrowingRecord = BorrowingRecord(id = 1L, libraryBookId = 1L, borrowDate = LocalDate.of(2023, 1, 1), returnDate = null)
+        reader = Reader(id = 1L, fullName = "John Doe", email = "john.doe@example.com")
+        borrowingRecord = BorrowingRecord(id = 1L, libraryBookId = 1L, readerId = reader.id!!, borrowDate = LocalDate.of(2023, 1, 1), returnDate = null)
     }
 
     @Test
     fun whenGetAllRecords_thenAllRecordsAreReturned() {
-        `when`(borrowingRecordRepository.findAll()).thenReturn(listOf(borrowingRecord))
+        whenever(borrowingRecordRepository.findAll()).thenReturn(listOf(borrowingRecord))
         val records = borrowingRecordService.getAllRecords()
         assertNotNull(records)
         assertEquals(1, records.size)
@@ -40,7 +42,7 @@ class BorrowingRecordServiceTest {
 
     @Test
     fun givenRecordId_whenGetRecordById_thenRecordIsReturned() {
-        `when`(borrowingRecordRepository.findById(1L)).thenReturn(borrowingRecord)
+        whenever(borrowingRecordRepository.findById(1L)).thenReturn(borrowingRecord)
         val foundRecord = borrowingRecordService.getRecordById(1L)
         assertNotNull(foundRecord)
         assertEquals(borrowingRecord, foundRecord)
@@ -48,7 +50,7 @@ class BorrowingRecordServiceTest {
 
     @Test
     fun givenRecord_whenCreateRecord_thenRecordIsCreated() {
-        `when`(borrowingRecordRepository.create(borrowingRecord)).thenReturn(borrowingRecord)
+        whenever(borrowingRecordRepository.create(borrowingRecord)).thenReturn(borrowingRecord)
         val createdRecord = borrowingRecordService.createRecord(borrowingRecord)
         assertNotNull(createdRecord)
         assertEquals(borrowingRecord, createdRecord)
@@ -56,7 +58,7 @@ class BorrowingRecordServiceTest {
 
     @Test
     fun givenRecord_whenUpdateRecord_thenRecordIsUpdated() {
-        `when`(borrowingRecordRepository.update(borrowingRecord)).thenReturn(borrowingRecord)
+		whenever(borrowingRecordRepository.update(borrowingRecord)).thenReturn(borrowingRecord)
         val updatedRecord = borrowingRecordService.updateRecord(borrowingRecord)
         assertNotNull(updatedRecord)
         assertEquals(borrowingRecord, updatedRecord)
@@ -64,7 +66,7 @@ class BorrowingRecordServiceTest {
 
     @Test
     fun givenRecordId_whenDeleteRecord_thenRecordIsDeleted() {
-        doNothing().`when`(borrowingRecordRepository).deleteById(borrowingRecord.id!!)
+        doNothing().whenever(borrowingRecordRepository).deleteById(borrowingRecord.id!!)
         borrowingRecordService.deleteRecord(borrowingRecord.id!!)
         verify(borrowingRecordRepository, times(1)).deleteById(borrowingRecord.id!!)
     }

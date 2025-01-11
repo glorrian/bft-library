@@ -8,11 +8,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.doNothing
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
+import org.mockito.kotlin.*
 
 @ExtendWith(MockitoExtension::class)
 class LibraryBookServiceTest {
@@ -32,7 +29,7 @@ class LibraryBookServiceTest {
 
     @Test
     fun givenLibraryBook_whenCreate_thenLibraryBookIsCreated() {
-        `when`(libraryBookRepository.create(libraryBook)).thenReturn(libraryBook)
+        whenever(libraryBookRepository.create(libraryBook)).thenReturn(libraryBook)
         val createdLibraryBook = libraryBookService.createLibraryBook(libraryBook)
         assertNotNull(createdLibraryBook)
         assertEquals(1L, createdLibraryBook.bookId)
@@ -40,7 +37,7 @@ class LibraryBookServiceTest {
 
     @Test
     fun givenLibraryBook_whenUpdate_thenLibraryBookIsUpdated() {
-        `when`(libraryBookRepository.update(libraryBook)).thenReturn(libraryBook)
+        whenever(libraryBookRepository.update(libraryBook)).thenReturn(libraryBook)
         val updatedLibraryBook = libraryBookService.updateLibraryBook(libraryBook)
         assertNotNull(updatedLibraryBook)
         assertEquals(1L, updatedLibraryBook.bookId)
@@ -48,14 +45,14 @@ class LibraryBookServiceTest {
 
     @Test
     fun givenLibraryBookId_whenDelete_thenLibraryBookIsDeleted() {
-        doNothing().`when`(libraryBookRepository).deleteById(libraryBook.id!!)
+        doNothing().whenever(libraryBookRepository).deleteById(libraryBook.id!!)
         libraryBookService.deleteLibraryBook(libraryBook.id!!)
         verify(libraryBookRepository, times(1)).deleteById(libraryBook.id!!)
     }
 
     @Test
     fun givenLibraryBookId_whenGetById_thenLibraryBookIsReturned() {
-        `when`(libraryBookRepository.findById(libraryBook.id!!)).thenReturn(libraryBook)
+        whenever(libraryBookRepository.findById(libraryBook.id!!)).thenReturn(libraryBook)
         val foundLibraryBook = libraryBookService.getLibraryBookById(libraryBook.id!!)
         assertNotNull(foundLibraryBook)
         assertEquals(1L, foundLibraryBook?.bookId)
@@ -64,7 +61,7 @@ class LibraryBookServiceTest {
     @Test
     fun whenGetAllLibraryBooks_thenAllLibraryBooksAreReturned() {
         val libraryBooks = listOf(libraryBook)
-        `when`(libraryBookRepository.findAll()).thenReturn(libraryBooks)
+        whenever(libraryBookRepository.findAll()).thenReturn(libraryBooks)
         val foundLibraryBooks = libraryBookService.getAllLibraryBooks()
         assertNotNull(foundLibraryBooks)
         assertEquals(1, foundLibraryBooks.size)

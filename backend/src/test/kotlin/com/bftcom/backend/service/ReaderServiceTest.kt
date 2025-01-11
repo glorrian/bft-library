@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.*
 
@@ -30,7 +29,7 @@ class ReaderServiceTest {
 
     @Test
     fun givenReader_whenCreate_thenReaderIsCreated() {
-        `when`(readerRepository.create(reader)).thenReturn(reader)
+        whenever(readerRepository.create(reader)).thenReturn(reader)
         val createdReader = readerService.createReader(reader)
         assertNotNull(createdReader)
         assertEquals("John Doe", createdReader.fullName)
@@ -38,7 +37,7 @@ class ReaderServiceTest {
 
     @Test
     fun givenReader_whenUpdate_thenReaderIsUpdated() {
-        `when`(readerRepository.update(reader)).thenReturn(reader)
+        whenever(readerRepository.update(reader)).thenReturn(reader)
         val updatedReader = readerService.updateReader(reader)
         assertNotNull(updatedReader)
         assertEquals("John Doe", updatedReader.fullName)
@@ -46,14 +45,14 @@ class ReaderServiceTest {
 
     @Test
     fun givenReaderId_whenDelete_thenReaderIsDeleted() {
-        doNothing().`when`(readerRepository).deleteById(reader.id!!)
+        doNothing().whenever(readerRepository).deleteById(reader.id!!)
         readerService.deleteReader(reader.id!!)
         verify(readerRepository, times(1)).deleteById(reader.id!!)
     }
 
     @Test
     fun givenReaderId_whenGetById_thenReaderIsReturned() {
-        `when`(readerRepository.findById(reader.id!!)).thenReturn(reader)
+        whenever(readerRepository.findById(reader.id!!)).thenReturn(reader)
         val foundReader = readerService.getReaderById(reader.id!!)
         assertNotNull(foundReader)
         assertEquals("John Doe", foundReader?.fullName)
@@ -62,7 +61,7 @@ class ReaderServiceTest {
     @Test
     fun whenGetAllReaders_thenAllReadersAreReturned() {
         val readers = listOf(reader)
-        `when`(readerRepository.findAll()).thenReturn(readers)
+        whenever(readerRepository.findAll()).thenReturn(readers)
         val foundReaders = readerService.getAllReaders()
         assertNotNull(foundReaders)
         assertEquals(1, foundReaders.size)

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.Mockito.*
+import org.mockito.kotlin.*
 import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
@@ -30,7 +30,7 @@ class BookServiceTest {
 
     @Test
     fun givenBook_whenCreate_thenBookIsCreated() {
-        `when`(bookRepository.create(book)).thenReturn(book)
+        whenever(bookRepository.create(book)).thenReturn(book)
         val createdBook = bookService.createBook(book)
         assertNotNull(createdBook)
         assertEquals("Test Book", createdBook.title)
@@ -38,7 +38,7 @@ class BookServiceTest {
 
     @Test
     fun givenBook_whenUpdate_thenBookIsUpdated() {
-        `when`(bookRepository.update(book)).thenReturn(book)
+        whenever(bookRepository.update(book)).thenReturn(book)
         val updatedBook = bookService.updateBook(book)
         assertNotNull(updatedBook)
         assertEquals("Test Book", updatedBook.title)
@@ -46,14 +46,14 @@ class BookServiceTest {
 
     @Test
     fun givenBookId_whenDelete_thenBookIsDeleted() {
-        doNothing().`when`(bookRepository).deleteById(book.id!!)
+        doNothing().whenever(bookRepository).deleteById(book.id!!)
         bookService.deleteBook(book.id!!)
         verify(bookRepository, times(1)).deleteById(book.id!!)
     }
 
     @Test
     fun givenBookId_whenGetById_thenBookIsReturned() {
-        `when`(bookRepository.findById(book.id!!)).thenReturn(book)
+        whenever(bookRepository.findById(book.id!!)).thenReturn(book)
         val foundBook = bookService.getBookById(book.id!!)
         assertNotNull(foundBook)
         assertEquals("Test Book", foundBook?.title)
@@ -62,7 +62,7 @@ class BookServiceTest {
     @Test
     fun whenGetAllBooks_thenAllBooksAreReturned() {
         val books = listOf(book)
-        `when`(bookRepository.findAll()).thenReturn(books)
+        whenever(bookRepository.findAll()).thenReturn(books)
         val foundBooks = bookService.getAllBooks()
         assertNotNull(foundBooks)
         assertEquals(1, foundBooks.size)
@@ -72,7 +72,7 @@ class BookServiceTest {
     @Test
     fun whenGetAllBooksEager_thenAllBooksAreReturned() {
         val books = listOf(book)
-        `when`(bookRepository.findAllEager()).thenReturn(books)
+        whenever(bookRepository.findAllEager()).thenReturn(books)
         val foundBooks = bookService.getAllBooks(eager = true)
         assertNotNull(foundBooks)
         assertEquals(1, foundBooks.size)
@@ -81,7 +81,7 @@ class BookServiceTest {
 
     @Test
     fun givenBookId_whenGetByIdEager_thenBookIsReturned() {
-        `when`(bookRepository.findByIdEager(book.id!!)).thenReturn(book)
+        whenever(bookRepository.findByIdEager(book.id!!)).thenReturn(book)
         val foundBook = bookService.getBookById(book.id!!, eager = true)
         assertNotNull(foundBook)
         assertEquals("Test Book", foundBook?.title)

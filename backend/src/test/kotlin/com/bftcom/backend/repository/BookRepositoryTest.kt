@@ -16,7 +16,7 @@ class BookRepositoryTest {
 
 	@Test
 	fun givenBook_whenSave_thenCanBeFoundById() {
-		val book = Book(title = "Test Book", isbn = "1234567890123", publicationDate = LocalDate.now())
+		val book = Book(title = "Test Book", isbn = "1234567890143", publicationDate = LocalDate.now())
 		val savedBook = bookRepository.create(book)
 		val foundBook = bookRepository.findById(savedBook.id!!)
 		assertNotNull(foundBook)
@@ -25,7 +25,7 @@ class BookRepositoryTest {
 
 	@Test
 	fun givenBook_whenDelete_thenCannotBeFoundById() {
-		val book = Book(title = "Test Book", isbn = "1234567890124", publicationDate = LocalDate.now())
+		val book = Book(title = "Test Book", isbn = "1234567890144", publicationDate = LocalDate.now())
 		val savedBook = bookRepository.create(book)
 		bookRepository.deleteById(savedBook.id!!)
 		val foundBook = bookRepository.findById(savedBook.id!!)
@@ -34,7 +34,7 @@ class BookRepositoryTest {
 
 	@Test
 	fun givenBook_whenUpdate_thenUpdatedValuesCanBeFound() {
-		val book = Book(title = "Test Book", isbn = "1234567890125", publicationDate = LocalDate.now())
+		val book = Book(title = "Test Book", isbn = "1234567890145", publicationDate = LocalDate.now())
 		val savedBook = bookRepository.create(book)
 		val updatedBook = savedBook.copy(title = "Updated Book")
 		bookRepository.update(updatedBook)
@@ -45,8 +45,8 @@ class BookRepositoryTest {
 
 	@Test
 	fun givenMultipleBooks_whenFindAll_thenAllBooksAreReturned() {
-		val book1 = Book(title = "Book One", isbn = "1234567890126", publicationDate = LocalDate.now())
-		val book2 = Book(title = "Book Two", isbn = "1234567890127", publicationDate = LocalDate.now())
+		val book1 = Book(title = "Book One", isbn = "1234567890146", publicationDate = LocalDate.now())
+		val book2 = Book(title = "Book Two", isbn = "1234567890147", publicationDate = LocalDate.now())
 		bookRepository.create(book1)
 		bookRepository.create(book2)
 		val books = bookRepository.findAll()
@@ -56,7 +56,7 @@ class BookRepositoryTest {
 
 	@Test
 	fun givenBookWithInvalidTitle_whenSave_thenThrowsException() {
-		val invalidBook = Book(title = "", isbn = "1234567890128", publicationDate = LocalDate.now())
+		val invalidBook = Book(title = "", isbn = "1234567890148", publicationDate = LocalDate.now())
 		val exception = assertThrows<IllegalArgumentException> {
 			bookRepository.create(invalidBook)
 		}
@@ -74,8 +74,8 @@ class BookRepositoryTest {
 
 	@Test
 	fun givenDuplicateIsbn_whenSave_thenThrowsException() {
-		val book1 = Book(title = "Test Book 1", isbn = "1234567890129", publicationDate = LocalDate.now())
-		val book2 = Book(title = "Test Book 2", isbn = "1234567890129", publicationDate = LocalDate.now())
+		val book1 = Book(title = "Test Book 1", isbn = "1234567890149", publicationDate = LocalDate.now())
+		val book2 = Book(title = "Test Book 2", isbn = "1234567890149", publicationDate = LocalDate.now())
 		bookRepository.create(book1)
 		val exception = assertThrows<Exception> {
 			bookRepository.create(book2)

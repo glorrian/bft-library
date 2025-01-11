@@ -2,13 +2,16 @@
 kotlin = "1.9.25"
 spring-boot = "3.4.1"
 spring-doc = "2.8.0"
+swagger-core = "2.2.27"
+swagger-parser = "2.1.24"
+artemis = "2.39.0"
+artemis-broker = "6.1.4"
 dotenv-kotlin = "6.5.0"
 jackson = "2.18.2"
 liquibase = "4.29.2"
 h2 = "2.3.232"
 postgresql = "42.7.4"
 junit-platform-launcher = "1.11.4"
-kotest = "5.9.1"
 mockito = "5.4.0"
 
 
@@ -24,8 +27,14 @@ spring-boot-starter-jdbc = { module = "org.springframework.boot:spring-boot-star
 spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref = "spring-boot" }
 spring-doc-starter-openapi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "spring-doc" }
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot" }
+spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "spring-boot" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot" }
+swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", version.ref = "swagger-core" }
+swagger-parser = { module = "io.swagger.parser.v3:swagger-parser", version.ref = "swagger-parser" }
+apache-artemis = { module = "org.apache.activemq:apache-artemis", version.ref = "artemis" }
+apache-artemis-broker = { module = "org.apache.activemq:activemq-broker", version.ref = "artemis-broker" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
 h2-database = { module = "com.h2database:h2", version.ref = "h2" }
@@ -33,6 +42,4 @@ postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" 
 dotenv-kotlin = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "dotenv-kotlin" }
 kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform-launcher" }
-kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
-mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version = "mockito" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }

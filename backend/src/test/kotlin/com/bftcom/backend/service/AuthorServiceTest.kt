@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.kotlin.*
 import org.mockito.junit.jupiter.MockitoExtension
 import java.time.LocalDate
 
@@ -32,7 +32,7 @@ class AuthorServiceTest {
 
 	@Test
 	fun givenAuthor_whenCreate_thenAuthorIsCreated() {
-		`when`(authorRepository.create(author)).thenReturn(author)
+		whenever(authorRepository.create(author)).thenReturn(author)
 		val createdAuthor = authorService.createAuthor(author)
 		assertNotNull(createdAuthor)
 		assertEquals("Test Author", createdAuthor.fullName)
@@ -40,7 +40,7 @@ class AuthorServiceTest {
 
 	@Test
 	fun givenAuthor_whenUpdate_thenAuthorIsUpdated() {
-		`when`(authorRepository.update(author)).thenReturn(author)
+		whenever(authorRepository.update(author)).thenReturn(author)
 		val updatedAuthor = authorService.updateAuthor(author)
 		assertNotNull(updatedAuthor)
 		assertEquals("Test Author", updatedAuthor.fullName)
@@ -48,14 +48,14 @@ class AuthorServiceTest {
 
 	@Test
 	fun givenAuthorId_whenDelete_thenAuthorIsDeleted() {
-		doNothing().`when`(authorRepository).deleteById(author.id!!)
+		doNothing().whenever(authorRepository).deleteById(author.id!!)
 		authorService.deleteAuthor(author.id!!)
 		verify(authorRepository, times(1)).deleteById(author.id!!)
 	}
 
 	@Test
 	fun givenAuthorId_whenGetById_thenAuthorIsReturned() {
-		`when`(authorRepository.findById(author.id!!)).thenReturn(author)
+		whenever(authorRepository.findById(author.id!!)).thenReturn(author)
 		val foundAuthor = authorService.getAuthorById(author.id!!)
 		assertNotNull(foundAuthor)
 		assertEquals("Test Author", foundAuthor?.fullName)
@@ -64,7 +64,7 @@ class AuthorServiceTest {
 	@Test
 	fun whenGetAllAuthors_thenAllAuthorsAreReturned() {
 		val authors = listOf(author)
-		`when`(authorRepository.findAll()).thenReturn(authors)
+		whenever(authorRepository.findAll()).thenReturn(authors)
 		val foundAuthors = authorService.getAllAuthors()
 		assertNotNull(foundAuthors)
 		assertEquals(1, foundAuthors.size)

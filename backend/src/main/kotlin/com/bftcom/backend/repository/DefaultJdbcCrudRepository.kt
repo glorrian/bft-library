@@ -7,7 +7,7 @@ import java.sql.ResultSet
 @Suppress("SqlSourceToSinkFlow")
 abstract class DefaultJdbcCrudRepository<T>(
 	protected val jdbcTemplate: JdbcTemplate,
-	private val tableName: String, private val idColumnName: String = "id"
+	protected val tableName: String, private val idColumnName: String = "id"
 ) : CrudRepository<T, Long> {
 
 	protected abstract fun mapRow(rs: ResultSet): T

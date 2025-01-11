@@ -4,12 +4,35 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+
   h2:
     console:
       enabled: true
       path: /h2-console
+
   sql:
     init:
       mode: always
+
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master-test.yaml
+
+  artemis:
+    mode: EMBEDDED
+    embedded:
+      enabled: true
+      persistent: false
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+
+#  jms:
+#    template:
+#      default-destination: library-events
+
+library:
+  max-borrowing-days: 30
+  artemis:
+    reminder-queue-name: "reminder.queue"
+    return-queue-name: "return.queue"
+
