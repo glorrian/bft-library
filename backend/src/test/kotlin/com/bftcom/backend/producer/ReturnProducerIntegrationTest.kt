@@ -1,7 +1,7 @@
 package com.bftcom.backend.producer
 
 import com.bftcom.backend.config.ArtemisConfig
-import com.bftcom.backend.dto.ReturnMessage
+import com.bftcom.backend.dto.ReturnMessageDto
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.jms.TextMessage
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -39,7 +39,7 @@ class ReturnProducerIntegrationTest {
 		assertNotNull(message, "Message should not be null")
 
 		val messageText = message!!.text
-		val reminderMessage = objectMapper.readValue(messageText, ReturnMessage::class.java)
+		val reminderMessage = objectMapper.readValue(messageText, ReturnMessageDto::class.java)
 
 		assertEquals(borrowingRecordId, reminderMessage.borrowingRecordId)
 		assertEquals(returnDate, reminderMessage.returnDate)

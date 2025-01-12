@@ -1,13 +1,29 @@
 package com.bftcom.backend.config
 
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
 
+/**
+ * Configuration properties for library-related settings.
+ *
+ * Maps properties prefixed with "library" from the application's configuration.
+ *
+ * @property maxBorrowingDays The maximum number of days a book can be borrowed.
+ * @property emailTemplate Template configuration for email notifications.
+ */
 @Configuration
+@ConfigurationProperties(prefix = "library")
 class LibraryConfig {
-	@Value("\${library.max-borrowing-days}")
 	var maxBorrowingDays: Long = 0
+	lateinit var emailTemplate: EmailTemplate
 
-	@Value("\${library.templates.return}")
-	var returnTemplatePath: String = ""
+	/**
+	 * Encapsulates email template details used for return notifications.
+	 *
+	 * @property returnMailTemplate Path or content of the email template for returns.
+	 */
+	class EmailTemplate {
+		lateinit var returnMailTemplate: String
+		lateinit var remindMailTemplate: String
+	}
 }

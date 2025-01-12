@@ -1,8 +1,8 @@
 package com.bftcom.backend.listener
 
 import com.bftcom.backend.config.ArtemisConfig
-import com.bftcom.backend.dto.ReturnMessage
-import com.bftcom.backend.service.ReturnProcessingService
+import com.bftcom.backend.dto.ReturnMessageDto
+import com.bftcom.backend.service.EmailProcessingService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -25,7 +25,7 @@ class ReturnListenerIntegrationTest {
 	lateinit var objectMapper: ObjectMapper
 
 	@Autowired
-	lateinit var returnProcessingService: ReturnProcessingService
+	lateinit var emailProcessingService: EmailProcessingService
 
 	@Autowired
 	lateinit var artemisConfig: ArtemisConfig
@@ -34,22 +34,22 @@ class ReturnListenerIntegrationTest {
 	class Config {
 		@Bean
 		@Primary
-		fun returnProcessingService(): ReturnProcessingService = Mockito.mock(ReturnProcessingService::class.java)
+		fun returnProcessingService(): EmailProcessingService = Mockito.mock(EmailProcessingService::class.java)
 	}
 
 	@Test
 	fun givenValidReturnMessage_whenMessageReceived_thenProcessReturnMessageCalled() {
 		val borrowingRecordId = 5L
 		val returnDate = "2023-08-15"
-		val returnMessage = ReturnMessage(borrowingRecordId, returnDate)
+		val returnMessageDto = ReturnMessageDto(borrowingRecordId, returnDate)
 		val queueName = artemisConfig.returnQueueName
 
-		val messageContent = objectMapper.writeValueAsString(returnMessage)
+		val messageContent = objectMapper.writeValueAsString(returnMessageDto)
 
 		jmsTemplate.convertAndSend(queueName, messageContent)
 
 		Thread.sleep(1000)
 
-		Mockito.verify(returnProcessingService).processReturnMessage(returnMessage)
+		Mockito.verify(emailProcessingService).processReturnMessage(returnMessageDto)
 	}
 }

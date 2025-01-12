@@ -66,12 +66,31 @@ class BookRepository(
 		super.deleteById(id)
 	}
 
+	/**
+	 * Finds a book by its identifier, eagerly loading associated work IDs.
+	 *
+	 * This method retrieves a [Book] entity by its ID and then loads the IDs of works
+	 * associated with the book from the `book_works` table. The returned [Book]
+	 * includes the list of related work IDs in [Book.worksIds].
+	 *
+	 * @param id The identifier of the book to retrieve.
+	 * @return The [Book] entity with populated [Book.worksIds], or null if not found.
+	 */
 	fun findByIdEager(id: Long): Book? {
 		val book = findById(id) ?: return null
 		val works = loadWorksForBook(id)
 		return book.copy(worksIds = works)
 	}
 
+	/**
+	 * Retrieves all books from the database, eagerly loading associated work IDs for each book.
+	 *
+	 * This method retrieves all [Book] entities and then for each book,
+	 * it loads the associated work IDs from the `book_works` table, populating the
+	 * [Book.worksIds] property of each book.
+	 *
+	 * @return A list of all [Book] entities with their associated work IDs populated.
+	 */
 	fun findAllEager(): List<Book> {
 		val books = findAll()
 

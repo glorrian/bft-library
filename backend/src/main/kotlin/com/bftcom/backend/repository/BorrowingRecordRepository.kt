@@ -43,6 +43,16 @@ class BorrowingRecordRepository(
 		return entity.copy(id = generatedId)
 	}
 
+	/**
+	 * Finds all borrowing records for a given library book that have not been returned yet.
+	 *
+	 * This method queries the `borrowing_records` table for records matching the provided
+	 * [libraryBookId] where the [BorrowingRecord.returnDate] is NULL,
+	 * indicating the book has not been returned.
+	 *
+	 * @param libraryBookId The ID of the library book.
+	 * @return A list of [BorrowingRecord] entries with no return date.
+	 */
 	fun findAllByLibraryBookIdAndReturnDateIsNull(libraryBookId: Long): List<BorrowingRecord> {
 		return jdbcTemplate.query(
 			"SELECT * FROM borrowing_records WHERE library_book_id = ? AND return_date IS NULL",

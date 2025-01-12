@@ -64,6 +64,14 @@ class WorkRepository(
 		super.deleteById(id)
 	}
 
+	/**
+	 * Retrieves all works eagerly loading associated author IDs.
+	 *
+	 * This method fetches all [Work] entities and then loads the associated author IDs
+	 * for each work from the `work_authors` table, populating the [Work.authorsIds] property.
+	 *
+	 * @return A list of all [Work] entities with their associated author IDs populated.
+	 */
 	fun findAllEager(): List<Work> {
 		val works = findAll()
 		val workIds = works.mapNotNull { it.id }
@@ -75,6 +83,15 @@ class WorkRepository(
 		}
 	}
 
+	/**
+	 * Retrieves a work by its ID, eagerly loading associated author IDs.
+	 *
+	 * This method finds a [Work] entity by ID and loads its associated author IDs
+	 * from the "work_authors" table, setting the [Work.authorsIds] property.
+	 *
+	 * @param id The identifier of the work.
+	 * @return The [Work] entity with its [Work.authorsIds] populated, or null if not found.
+	 */
 	fun findByIdEager(id: Long): Work? {
 		val w = findById(id) ?: return null
 		val mapAuthors = loadAuthorsIdsForWorks(listOf(id))

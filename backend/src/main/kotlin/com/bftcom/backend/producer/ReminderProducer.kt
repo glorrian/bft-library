@@ -7,6 +7,12 @@ import jakarta.jms.Session
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Component
 
+/**
+ * Sends reminder messages to a configured JMS queue.
+ *
+ * Uses {@link JmsTemplate} to send a serialized {@link ReminderMessageDto} to the queue specified
+ * by {@link ArtemisConfig.reminderQueueName}, setting a scheduled delay based on provided days.
+ */
 @Component
 class ReminderProducer(
 	private val jmsTemplate: JmsTemplate,
@@ -14,6 +20,12 @@ class ReminderProducer(
 	private val artemisConfig: ArtemisConfig
 ) {
 
+	/**
+	 * Sends a reminder message with a scheduled delay.
+	 *
+	 * @param borrowingRecordId Identifier of the borrowing record.
+	 * @param delayDays Number of days to delay the reminder message.
+	 */
 	fun sendReminderMessage(borrowingRecordId: Long, delayDays: Long) {
 		val delayMillis = delayDays * 24 * 60 * 60 * 1000
 		val reminderMessage = ReminderMessageDto(borrowingRecordId)

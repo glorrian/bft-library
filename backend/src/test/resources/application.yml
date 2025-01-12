@@ -26,12 +26,11 @@ spring:
     user: admin
     password: admin
 
-#  jms:
-#    template:
-#      default-destination: library-events
-
 library:
   max-borrowing-days: 30
+  email-template:
+    return-mail-template: "email_templates/return_template.json"
+    remind-mail-template: "email_templates/remind_template.json"
   artemis:
     reminder-queue-name: "reminder.queue"
     return-queue-name: "return.queue"
