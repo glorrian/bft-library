@@ -7,4 +7,7 @@ import org.springframework.context.annotation.Configuration
 class LibraryConfig {
 	@Value("\${library.max-borrowing-days}")
 	var maxBorrowingDays: Long = 0
+
+	@Value("\${library.templates.return}")
+	var returnTemplatePath: String = ""
 }

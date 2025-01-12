@@ -39,6 +39,8 @@ spring:
 
 library:
   max-borrowing-days: 30
+  templates:
+    return: "email_templates/return_template.json"
   artemis:
     reminder-queue-name: "reminder-queue"
     return-queue-name: "return-queue"

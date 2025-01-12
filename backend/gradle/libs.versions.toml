@@ -13,6 +13,7 @@ h2 = "2.3.232"
 postgresql = "42.7.4"
 junit-platform-launcher = "1.11.4"
 mockito = "5.4.0"
+st4 = "4.3.4"
 
 
 [plugins]
@@ -43,3 +44,4 @@ dotenv-kotlin = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "d
 kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform-launcher" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
+st4 = { module = "org.antlr:ST4", version.ref = "st4" }

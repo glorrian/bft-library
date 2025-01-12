@@ -6,9 +6,9 @@ import com.bftcom.backend.entity.Author
 import com.bftcom.backend.service.AuthorService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.mockito.kotlin.any
+import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -49,7 +49,7 @@ class AuthorControllerIntegrationTest {
 			Author(id = 1, fullName = "John Doe", pseudonym = "JD", birthDate = LocalDate.of(1990, 1, 1)),
 			Author(id = 2, fullName = "Jane Smith", pseudonym = "JS", birthDate = LocalDate.of(1985, 5, 15))
 		)
-		given(authorService.getAllAuthors()).willReturn(authors)
+		whenever(authorService.getAllAuthors()).thenReturn(authors)
 
 		mockMvc.perform(get("/authors"))
 			.andExpect(status().isOk)
@@ -62,7 +62,7 @@ class AuthorControllerIntegrationTest {
 	@Test
 	fun givenAuthorId_whenGetAuthor_thenReturnAuthor() {
 		val author = Author(id = 1, fullName = "John Doe", pseudonym = "JD", birthDate = LocalDate.of(1990, 1, 1))
-		given(authorService.getAuthorById(1)).willReturn(author)
+		whenever(authorService.getAuthorById(1)).thenReturn(author)
 
 		mockMvc.perform(get("/authors/1"))
 			.andExpect(status().isOk)
@@ -75,7 +75,7 @@ class AuthorControllerIntegrationTest {
 	fun givenValidAuthorCreateDto_whenCreateAuthor_thenReturnCreatedAuthor() {
 		val dto = AuthorCreateDto(fullName = "John Doe", pseudonym = "JD", birthDate = LocalDate.of(1990, 1, 1))
 		val author = Author(id = 1, fullName = dto.fullName, pseudonym = dto.pseudonym, birthDate = dto.birthDate)
-		given(authorService.createAuthor(any())).willReturn(author)
+		whenever(authorService.createAuthor(any())).thenReturn(author)
 
 		mockMvc.perform(
 			post("/authors")
@@ -95,8 +95,8 @@ class AuthorControllerIntegrationTest {
 		val dto = AuthorUpdateDto(fullName = "Johnny Doe", pseudonym = null, birthDate = null)
 		val updatedAuthor = existingAuthor.copy(fullName = "Johnny Doe")
 
-		given(authorService.getAuthorById(1)).willReturn(existingAuthor)
-		given(authorService.updateAuthor(updatedAuthor)).willReturn(updatedAuthor)
+		whenever(authorService.getAuthorById(1)).thenReturn(existingAuthor)
+		whenever(authorService.updateAuthor(updatedAuthor)).thenReturn(updatedAuthor)
 
 		mockMvc.perform(
 			put("/authors/1")

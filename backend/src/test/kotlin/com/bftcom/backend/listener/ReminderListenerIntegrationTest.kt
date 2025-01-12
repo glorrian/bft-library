@@ -12,7 +12,7 @@ import com.bftcom.backend.service.EmailService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
-import org.mockito.kotlin.given
+import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -82,9 +82,9 @@ class ReminderListenerIntegrationTest {
 		val reader = Reader(id = 10L, fullName = "John Doe", email = "john@example.com")
 		val book = Book(id = 100L, title = "Test Book", isbn = "1234567890123", publicationDate = LocalDate.of(2020, 1, 1), worksIds = emptyList())
 
-		given(borrowingRecordRepository.findById(borrowingRecordId)).willReturn(borrowingRecord)
-		given(readerRepository.findById(borrowingRecord.readerId)).willReturn(reader)
-		given(bookRepository.findById(borrowingRecord.libraryBookId)).willReturn(book)
+		whenever(borrowingRecordRepository.findById(borrowingRecordId)).thenReturn(borrowingRecord)
+		whenever(readerRepository.findById(borrowingRecord.readerId)).thenReturn(reader)
+		whenever(bookRepository.findById(borrowingRecord.libraryBookId)).thenReturn(book)
 
 		val messageContent = objectMapper.writeValueAsString(reminderMessageDto)
 		val queueName = artemisConfig.reminderQueueName

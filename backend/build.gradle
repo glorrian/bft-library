@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.bftcom'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 java {
     toolchain {
@@ -35,6 +35,7 @@ dependencies {
     implementation libs.apache.artemis.broker
     implementation libs.kotlin.reflect
     implementation libs.liquibase.core
+    implementation libs.st4
     runtimeOnly libs.h2.database
     runtimeOnly libs.postgresql
     runtimeOnly libs.dotenv.kotlin
